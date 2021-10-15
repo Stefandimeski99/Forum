@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Article</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+          crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+          crossorigin="anonymous"/>
+</head>
+<body>
+<header class="bg-dark text-white text-center">
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-1 mt-1">
+                Logo
+            </div>
+            <div class="col-1 mt-1">
+                About
+            </div>
+            <div class="col-1 mt-1">
+                <a href="/home">Home</a>
+            </div>
+            <form class="col-7">
+
+            </form>
+            <div class="col-2 mt-1">
+                User info
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container mt-5 pl-0">
+    <div class="row">
+        <div class="col-12">
+            <h3 th:text="${post.getTopic()}" style="display: inline;"></h3>
+            <h3 style="display: inline;"> - </h3>
+            <h3 th:text="${post.getTitle()}" style="display: inline;">Title</h3>
+        </div>
+        <div class="col-11 mt-2">
+            <medium class="text-muted">Publisher:</medium>
+            <medium th:text="${post.getUser().getUsername()}" class="text-dark">User&nbsp;&nbsp;&nbsp;</medium>
+            <medium class="text-muted ml-3">Date posted:</medium>
+            <medium th:text="${post.getDate()}" class="text-dark">Date</medium>
+        </div>
+        <div class="col-1 mt-2">
+            <button type="button" style="border: none; background: none;">
+                <a th:href="@{'/post/{id}/edit' (id = ${post.getId()})}" title="Edit post" class="fas fa-edit"></a>
+            </button>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <p th:text="${post.getContext()}"></p>
+        </div>
+    </div>
+    <hr>
+</div>
+<th:block th:if="${comments.size() > 0}">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h4 style="display: inline;">Comments on this topic </h4>
+                <h4 style="display: inline;" th:text="'(' + ${post.getNumComments()} + ')'"></h4>
+            </div>
+        </div>
+        <hr>
+        <div th:each="comment : ${comments}" style="border: black;">
+            <div class="row">
+                <div class="col-12">
+                    <div class="comment-widgets m-b-20 mt-2">
+                        <div class="d-flex flex-row comment-row">
+                            <div>
+                            <span class="round">
+                                <i class="far fa-user fa-2x" style="width: 40px;"></i>
+                            </span>
+                            </div>
+                            <div class="comment-text w-100">
+                                <h5 th:text="${comment.getUser().getUsername()}">Stefan Dimeski</h5>
+                                <div class="comment-footer">
+                                    <span class="date text-muted" th:text="${comment.getDate()}">12-05-2021</span>
+                                </div>
+                                <p class="m-b-5 m-t-10 pt-2" th:text="${comment.getContext()}"></p>
+
+                                <div class="container" th:if="${replies != null}">
+                                    <div th:each="reply : ${replies}">
+                                        <div th:if="${reply.getComment().getId() == comment.getId()}">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="round">
+                                                        <i class="far fa-user" style="width: 40px;"></i>
+                                                    </span>
+                                                    <b><medium style="display: inline;" th:text="${reply.getUser().getUsername()}">saddsa</medium></b>
+                                                    <medium style="display: inline;"> - </medium>
+                                                    <medium style="display: inline;" class="text-muted" th:text="${reply.getDate()}">dwawda</medium>
+                                                </div>
+                                                <div class="col-12">
+                                                    <p style="margin-left: 44px;" th:text="${reply.getContext()}">dwadwa</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <form style="display: inline;" th:method="POST"
+                                      th:action="@{'/comment/{parentId}/{commentId}/addReply' (parentId = ${post.getId()}, commentId = ${comment.getId()})}">
+                                    <input type="text" name="replyText" placeholder="Reply to this comment"
+                                           style="width: 30%; border-color: aqua; border-radius: 7px;">
+                                    <button title="Reply to comment" type="submit"
+                                            style="border: none; background: none;"><a class="link-muted"
+                                                                                       style="text-decoration: none; display: inline;"><i
+                                            class="fas fa-reply me-1"></i>Reply</a></button>
+                                </form>
+                                <form style="display: inline;" th:method="POST"
+                                      th:action="@{'/comment/delete/{commentId}/{parentId}' (commentId=${comment.getId()}, parentId=${post.getId()})}">
+                                    <button type="submit" style="border: none; background: none;">
+                                        <a href="#"><i title="Delete comment" class="fa fa-trash"></i></a>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+</th:block>
+<th:block th:if="${comments.size() == 0}">
+    <div class="container mt-3">
+        <div class="row">
+            <h4>This post does not have any comments yet</h4>
+        </div>
+        <hr>
+    </div>
+</th:block>
+<div class="container mt-5">
+    <div class="row">
+        <div class="form-group">
+            <form th:method="post" th:action="@{'/post/{id}/show' (id = ${post.getId()})}">
+                <label for="exampleFormControlTextarea1"><h5>Add new comment</h5></label>
+                <textarea class="form-control" name="postContext" id="exampleFormControlTextarea1" rows="5"></textarea>
+                <button class="mt-2" type="submit">Add comment</button>
+            </form>
+        </div>
+    </div>
+</div>
+<footer class="bg-dark text-center text-white mt-5">
+    <div class="container p-4 pb-0">
+        <section class="mb-4">
+            <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-twitter"></i
+            ></a>
+            <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-google"></i
+            ></a>
+            <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-instagram"></i
+            ></a>
+            <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-linkedin-in"></i
+            ></a>
+            <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-github"></i
+            ></a>
+        </section>
+    </div>
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2021 Copyright:
+        <a class="text-white" href="https://mdbootstrap.com/">StefanDimeski.com</a>
+    </div>
+</footer>
+</body>
+</html>
