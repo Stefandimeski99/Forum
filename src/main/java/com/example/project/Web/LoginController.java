@@ -1,12 +1,11 @@
 package com.example.project.Web;
 
+import com.example.project.Model.Exceptions.InvalidUserCredentialsException;
 import com.example.project.Model.User;
 import com.example.project.Service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,7 +20,10 @@ public class LoginController {
     }
 
     @GetMapping
-    public String loginPage(){
+    public String loginPage(@RequestParam(required = false) String error, Model model){
+        if(error != null && !error.isEmpty()){
+            model.addAttribute("message", error);
+        }
         return "login.html";
     }
 
@@ -29,9 +31,12 @@ public class LoginController {
     public String loginUser(HttpServletRequest httpServletRequest,
                             @RequestParam String username,
                             @RequestParam String password){
-        User user = this.userService.userLogin(username, password);
-        //TODO: Handle error
-        httpServletRequest.getSession().setAttribute("user", user);
-        return "redirect:/home";
+        try {
+            User user = this.userService.userLogin(username, password);
+            httpServletRequest.getSession().setAttribute("user", user);
+            return "redirect:/home";
+        } catch (InvalidUserCredentialsException exception) {
+            return "redirect:/login?error=InvalidUserCredentials";
+        }
     }
 }

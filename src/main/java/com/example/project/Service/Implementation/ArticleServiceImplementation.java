@@ -7,6 +7,8 @@ import com.example.project.Repository.UserRepository;
 import com.example.project.Service.ArticleService;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 @Service
@@ -32,7 +34,8 @@ public class ArticleServiceImplementation implements ArticleService {
 
     @Override
     public Article addPost(String postContext, User user, String topic, String postTitle) {
-        Article article = new Article(postContext, user, topic, postTitle,  LocalDate.now().toString());
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        Article article = new Article(postContext, user, topic, postTitle,  formattedDate);
         return this.articleRepository.save(article);
     }
 
@@ -43,7 +46,7 @@ public class ArticleServiceImplementation implements ArticleService {
 
     @Override
     public List<Article> listArticlesByTopic(String topic) {
-        return this.articleRepository.findAllByTopic(topic);
+        return this.articleRepository.findAllByTopicLike(topic);
     }
 
     @Override

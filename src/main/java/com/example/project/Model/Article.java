@@ -16,7 +16,7 @@ public class Article {
     private Long id;
     @ManyToOne
     private User user;
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comment;
     @Lob
     private String context;

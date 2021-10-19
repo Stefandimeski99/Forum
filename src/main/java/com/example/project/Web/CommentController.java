@@ -42,4 +42,11 @@ public class CommentController {
         replyService.addReply(replyText, commentId, user);
         return "redirect:/post/{parentId}";
     }
+
+    @PostMapping("/{parentId}/{replyId}/removeReply")
+    public String removeReply(@PathVariable Long parentId,
+                              @PathVariable Long replyId){
+        this.replyService.removeReply(replyId);
+        return "redirect:/post/{parentId}";
+    }
 }

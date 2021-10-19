@@ -8,6 +8,8 @@ import com.example.project.Repository.CommentRepository;
 import com.example.project.Service.CommentService;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 @Service
 public class CommentServiceImplementation implements CommentService {
@@ -22,7 +24,8 @@ public class CommentServiceImplementation implements CommentService {
 
     @Override
     public Comment addComment(String context, User user, Article article) {
-        Comment comment = new Comment(context, user, LocalDate.now().toString(), article);
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        Comment comment = new Comment(context, user, formattedDate, article);
         article.getComment().add(comment);
         article.setNumComments(article.getNumComments() + 1);
         return this.commentRepository.save(comment);
@@ -35,6 +38,7 @@ public class CommentServiceImplementation implements CommentService {
         Article article = comment.getArticle();
         article.setNumComments(article.getNumComments() - 1);
         article.getComment().remove(comment);
+        this.articleRepository.save(article);
         return comment;
     }
 }

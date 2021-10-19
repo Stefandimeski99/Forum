@@ -33,7 +33,14 @@ public class PostController {
 
     @GetMapping("/{id}")
     public String openPost(@PathVariable Long id,
-                           Model model){
+                           Model model,
+                           HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        if(user != null) {
+            model.addAttribute("username", user.getUsername());
+        }else{
+            model.addAttribute("username", null);
+        }
         Article article = this.articleService.findById(id);
         model.addAttribute("post", article);
         List<Comment> commentList = this.articleService.findById(id).getComment();
@@ -41,9 +48,6 @@ public class PostController {
         if(replies != null){
             model.addAttribute("replies", replies);
         }
-//        for(int i = 0; i < commentList.size(); i++){
-//            model.addAttribute("comment" + i, this.)
-//        }
         if(commentList != null){
             model.addAttribute("comments", commentList);
         }
@@ -52,7 +56,14 @@ public class PostController {
 
     @GetMapping("/{id}/edit")
     public String editPost(@PathVariable Long id,
-                           Model model){
+                           Model model,
+                           HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        if(user != null) {
+            model.addAttribute("username", user.getUsername());
+        }else{
+            model.addAttribute("username", null);
+        }
         Article article = this.articleService.findById(id);
         model.addAttribute("post", article);
         return "editPost.html";

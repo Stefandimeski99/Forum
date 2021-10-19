@@ -9,6 +9,8 @@ import com.example.project.Service.ReplyService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 @Service
@@ -25,7 +27,8 @@ public class ReplyServiceImplementation implements ReplyService {
     @Override
     public Reply addReply(String context, Long commentId, User user) {
         Comment comment = this.commentRepository.findById(commentId).get();
-        Reply reply = new Reply(context, comment, LocalDate.now().toString(), user);
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        Reply reply = new Reply(context, comment, formattedDate, user);
         comment.getReplies().add(reply);
         return this.replyRepository.save(reply);
     }

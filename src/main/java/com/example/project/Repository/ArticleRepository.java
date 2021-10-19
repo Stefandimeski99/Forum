@@ -7,6 +7,6 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-    List<Article> findAllByTopic(String topic);
+    List<Article> findAllByTopicLike(String topic);
     List<Article> findAllByTitleLike(String title);
 }
